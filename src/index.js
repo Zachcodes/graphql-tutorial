@@ -1,19 +1,34 @@
 const { GraphQLServer} = require('graphql-yoga')
 
-const typeDefs = `
-type Query {
-    info: String!
-}
-`
+//Dummy Data 
+let links = [{
+    id: 'link-0',
+    url: 'www.howtographql.com',
+    description: 'Fullstack tutorial for GraphQL'
+}]
 
+
+let idCount = links.length
 const resolvers = {
     Query: {
-        info: () => null
+        info: () => 'Thwis is the api of a hackernews clone',
+        feed: () => links
+    },
+    Mutation: {
+        post: (parent, args) => {
+            const link = {
+                id: `link-${idCount++}`,
+                description: args.description,
+                url: args.url
+            }
+            links.push(link)
+            return link
+        }
     }
 }
 
 const server = new GraphQLServer({
-    typeDefs,
+    typeDefs: './src/schema.graphql',
     resolvers
 })
 
