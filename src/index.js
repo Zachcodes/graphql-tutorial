@@ -12,7 +12,10 @@ let idCount = links.length
 const resolvers = {
     Query: {
         info: () => 'Thwis is the api of a hackernews clone',
-        feed: () => links
+        feed: () => links,
+        link: (parent, args) => {
+            return links.find( link => link.id === args.id)
+        }
     },
     Mutation: {
         post: (parent, args) => {
@@ -23,6 +26,23 @@ const resolvers = {
             }
             links.push(link)
             return link
+        },
+        updateLink: (parent, args) => {
+            let linkToUpdate = links.find( link => link.id === args.id)
+            if(linkToUpdate) {
+                linkToUpdate = {
+                    id: linkToUpdate.id,
+                    url: args.url ? args.url : linkToUpdate.url,
+                    description: args.description ? args.description : linkToUpdate.description
+                }
+                return linkToUpdate
+            }
+            else return null;
+        },
+        deleteLink: (parent, args) => {
+            let index = links.findIndex( link => link.id === args.id)
+            if(index !== -1) links.splice(index, 1)
+            return links;
         }
     }
 }
